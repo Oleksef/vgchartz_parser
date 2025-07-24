@@ -1,6 +1,7 @@
 import pandas as pd
 import requests
 from lxml import html
+import csv
 
 
 PER_PAGE = 200
@@ -42,10 +43,10 @@ def process_gamelist(data):
     print(f'Processing {len(games)} games...')
     for game in games:
         item = dict(
-            name = f'"{game.xpath('td/a/text()')[0]}"',
-            platform = f'"{game.xpath('td/img[contains(@src,"/console")]/@alt')[0]}"',
-            publisher = f'"{game.xpath('td[5]/text()')[0]}"',
-            developer = f'"{game.xpath('td[6]/text()')[0]}"',
+            name = game.xpath('td/a/text()')[0],
+            platform = game.xpath('td/img[contains(@src,"/console")]/@alt')[0],
+            publisher = game.xpath('td[5]/text()')[0],
+            developer = game.xpath('td[6]/text()')[0],
             vgs_score = game.xpath('td[7]/text()')[0],
             critic_score = game.xpath('td[8]/text()')[0],
             user_score = game.xpath('td[9]/text()')[0],
@@ -55,7 +56,7 @@ def process_gamelist(data):
             pal_sales = game.xpath('td[13]/text()')[0],
             jp_sales = game.xpath('td[14]/text()')[0],
             other_sales = game.xpath('td[15]/text()')[0],
-            release_date = f'"{game.xpath('td[16]/text()')[0]}"'
+            release_date = game.xpath('td[16]/text()')[0]
         )
 
         game_list.append(item)
@@ -68,4 +69,4 @@ if __name__ == "__main__":
 
     if game_list:
         df = pd.DataFrame(game_list)
-        df.to_csv("games.csv", index=False)
+        df.to_csv("games.csv", index=False, quoting=csv.QUOTE_ALL)
